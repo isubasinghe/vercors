@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 ROOT=$(dirname $(dirname $(readlink -f $0)))
 (cd $ROOT; ./mill -j 0 vercors.main.runScript)
