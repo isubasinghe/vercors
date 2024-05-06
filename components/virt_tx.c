@@ -2,6 +2,7 @@
 #define DRIVER 0
 #define CLIENT_CH 1
 #define NUM_CLIENTS 3
+#define NET_BUFFER_SIZE 2048
 
 struct net_buff_desc {
     /* offset of buffer within buffer memory region or io address of buffer */
@@ -54,6 +55,19 @@ struct state {
     uintptr_t buffer_region_vaddrs[NUM_CLIENTS];
     uintptr_t buffer_region_paddrs[NUM_CLIENTS];
 };
+
+
+int extract_offset(uintptr_t *phys, struct state *gstate)
+{
+    for (int client = 0; client < NUM_CLIENTS; client++) {
+        if (*phys >= gstate->buffer_region_paddrs[client] &&
+            *phys < gstate->buffer_region_paddrs[client] + gstate->tx_queue_clients[client].size * NET_BUFFER_SIZE) {
+            *phys = *phys - gstate->buffer_region_paddrs[client];
+            return client;
+        }
+    }
+    return -1;
+}
 
 void init() {
 }
